@@ -1,0 +1,544 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Nukkad</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Hind:wght@400;500;600;700&family=Yatra+One&display=swap">
+<style>
+:root{
+  --bg:#F2F4F0; --surface:#FFFFFF; --surface-2:#E8ECE5; --ink:#14212B; --muted:#566470; --line:#D3D9D0;
+  --marigold:#E3A400; --on-marigold:#14212B; --neem:#1D6B5C; --neem-soft:#DAEDE7; --warn:#7A4300; --warn-bg:#FAEED6;
+  --font-display:"Yatra One",Georgia,"Times New Roman",serif;
+  --font-body:"Hind",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0F161C; --surface:#17212A; --surface-2:#1F2B36; --ink:#E9EEEA; --muted:#9AA8B3; --line:#2B3946;
+  --marigold:#F0B429; --on-marigold:#14212B; --neem:#5CC2AB; --neem-soft:#18342E; --warn:#F0B429; --warn-bg:#2B2512; color-scheme:dark}}
+
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--font-body);font-size:16px;line-height:1.55;
+  padding:28px 16px 56px}
+.wrap{max-width:1120px;margin:0 auto}
+h1,h2,h3{font-family:var(--font-display);font-weight:400;margin:0;text-wrap:balance;line-height:1.15}
+p{margin:0}
+a{color:var(--neem);text-underline-offset:3px}
+:focus-visible{outline:2px solid var(--neem);outline-offset:2px;border-radius:4px}
+
+header.top{display:flex;flex-wrap:wrap;align-items:baseline;gap:6px 18px;margin-bottom:26px}
+.brand{font-family:var(--font-display);font-size:clamp(2.2rem,6vw,3.2rem);line-height:1}
+.brand small{font-size:.5em;color:var(--neem);margin-left:10px;white-space:nowrap}
+.tag{color:var(--muted);max-width:46ch;flex:1 1 280px}
+
+.layout{display:grid;grid-template-columns:minmax(0,340px) minmax(0,1fr);gap:28px;align-items:start}
+@media (max-width:880px){.layout{grid-template-columns:minmax(0,1fr)}}
+
+form#planner{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:18px;display:grid;gap:16px;min-width:0}
+fieldset{border:0;margin:0;padding:0;min-width:0}
+legend,label.lab{display:block;font-size:12px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:6px;padding:0}
+select{width:100%;font:inherit;color:var(--ink);background:var(--surface-2);border:1px solid var(--line);border-radius:6px;padding:8px 10px}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.row3{display:grid;grid-template-columns:1.2fr 1fr 1fr;gap:10px}
+@media (max-width:420px){.row3{grid-template-columns:1fr 1fr}.row3>:first-child{grid-column:1/-1}}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chips label{cursor:pointer}
+.chips input{position:absolute;opacity:0;width:1px;height:1px}
+.chips span{display:inline-block;padding:5px 11px;border:1px solid var(--line);border-radius:999px;background:var(--surface-2);font-size:14px;user-select:none}
+.chips input:checked+span{background:var(--neem);border-color:var(--neem);color:var(--surface);font-weight:600}
+.chips input:focus-visible+span{outline:2px solid var(--neem);outline-offset:2px}
+.seg{display:flex;flex-wrap:wrap;gap:6px}
+.seg label{cursor:pointer}
+.seg input{position:absolute;opacity:0;width:1px;height:1px}
+.seg span{display:inline-block;padding:5px 11px;border:1px solid var(--line);border-radius:6px;background:var(--surface-2);font-size:14px}
+.seg input:checked+span{background:var(--ink);border-color:var(--ink);color:var(--bg);font-weight:600}
+.seg input:focus-visible+span{outline:2px solid var(--neem);outline-offset:2px}
+
+.btn{font:inherit;font-weight:700;border:0;border-radius:8px;padding:11px 16px;cursor:pointer;background:var(--marigold);color:var(--on-marigold)}
+.btn:hover{filter:brightness(1.05)}
+.btn[disabled]{opacity:.6;cursor:progress}
+.btn.ghost{background:transparent;color:var(--ink);border:1px solid var(--line);font-weight:600;padding:6px 12px;font-size:14px}
+.btn.ghost:hover{background:var(--surface-2)}
+.formnote{font-size:13px;color:var(--muted)}
+
+#result{min-width:0;display:grid;gap:16px}
+.res-head{display:grid;gap:10px}
+.res-head h2{font-size:clamp(1.6rem,4vw,2.2rem)}
+.summary{color:var(--muted);max-width:62ch}
+.meta{display:flex;flex-wrap:wrap;gap:8px}
+.pill{display:inline-block;font-size:13px;font-weight:600;padding:2px 10px;border-radius:999px;background:var(--surface-2);color:var(--ink);border:1px solid var(--line)}
+.pill.neem{background:var(--neem-soft);color:var(--neem);border-color:transparent}
+.pill.src{background:var(--marigold);color:var(--on-marigold);border-color:transparent}
+.banner{background:var(--warn-bg);color:var(--warn);border-radius:8px;padding:10px 14px;font-size:14.5px}
+.status{display:flex;align-items:center;gap:12px;background:var(--surface);border:1px dashed var(--line);border-radius:8px;padding:12px 14px}
+.dot{width:10px;height:10px;border-radius:50%;background:var(--marigold);animation:pulse 1.1s ease-in-out infinite}
+@keyframes pulse{50%{opacity:.25}}
+@media (prefers-reduced-motion:reduce){.dot{animation:none}}
+
+ol.stops{list-style:none;margin:0;padding:0;display:grid;gap:14px}
+li.stop{display:grid;grid-template-columns:104px minmax(0,1fr);gap:14px}
+@media (max-width:560px){li.stop{grid-template-columns:minmax(0,1fr);gap:6px}}
+.when{font-variant-numeric:tabular-nums;font-weight:600;font-size:15px;padding-top:16px}
+.when .tr{display:block;font-weight:400;font-size:13px;color:var(--muted)}
+@media (max-width:560px){.when{padding-top:0}.when .tr{display:inline;margin-left:8px}}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:16px;display:grid;gap:10px;min-width:0}
+.card h3{font-size:1.3rem}
+.area{font-size:14px;color:var(--muted);margin-top:2px}
+.why{font-weight:500}
+dl.facts{margin:0;display:grid;gap:8px}
+dl.facts div{display:grid;grid-template-columns:92px minmax(0,1fr);gap:10px;font-size:15px}
+@media (max-width:420px){dl.facts div{grid-template-columns:minmax(0,1fr);gap:0}}
+dl.facts dt{font-size:12px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);padding-top:2px}
+dl.facts dd{margin:0}
+.acts{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.acts a.btn{text-decoration:none;display:inline-block}
+.story{background:var(--surface-2);border-radius:8px;padding:12px 14px;font-size:15px;white-space:pre-wrap}
+.block{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:14px 16px}
+.block h3{font-size:1.05rem;margin-bottom:4px}
+.foot{font-size:13px;color:var(--muted);max-width:70ch}
+textarea#copybox{width:100%;min-height:140px;font:inherit;font-size:14px;color:var(--ink);background:var(--surface-2);border:1px solid var(--line);border-radius:8px;padding:10px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <div class="brand">Nukkad<small lang="hi">नुक्कड़</small></div>
+    <p class="tag">Plan a day in Delhi NCR that goes past the usual list. Pick your interests and your hours, and get a route through stepwells, old towns, wetlands and lanes most visitors skip.</p>
+  </header>
+
+  <div class="layout">
+    <form id="planner" autocomplete="off">
+      <div>
+        <label class="lab" for="start">Starting from</label>
+        <select id="start">
+          <option value="G">Gurugram</option>
+          <option value="SD">South Delhi</option>
+          <option value="CD">Central Delhi</option>
+          <option value="OD">Old Delhi and north</option>
+          <option value="ANY">Anywhere in NCR</option>
+        </select>
+      </div>
+      <div class="row3">
+        <div><label class="lab" for="day">Day</label><select id="day"></select></div>
+        <div><label class="lab" for="from">Leave at</label><select id="from"></select></div>
+        <div><label class="lab" for="hours">Hours free</label><select id="hours"></select></div>
+      </div>
+      <fieldset>
+        <legend>What you enjoy</legend>
+        <div class="chips" id="interests"></div>
+      </fieldset>
+      <fieldset>
+        <legend>Spend per person</legend>
+        <div class="seg" id="budget"></div>
+      </fieldset>
+      <div class="row2">
+        <div>
+          <label class="lab" for="group">Who is coming</label>
+          <select id="group">
+            <option value="solo">Just me</option>
+            <option value="couple">Two of us</option>
+            <option value="friends" selected>Friends</option>
+            <option value="family">Family with kids</option>
+            <option value="seniors">Family with seniors</option>
+          </select>
+        </div>
+        <div>
+          <label class="lab" for="lang">Write in</label>
+          <select id="lang"><option value="English">English</option><option value="Hindi">हिन्दी</option></select>
+        </div>
+      </div>
+      <fieldset>
+        <legend>Pace</legend>
+        <div class="seg" id="pace"></div>
+      </fieldset>
+      <button class="btn" id="go" type="submit">Plan my day</button>
+      <p class="formnote" id="formnote">Claude writes the route and the local context from a hand-picked list of 24 places. Without an API key on the server, the built-in planner makes the route.</p>
+    </form>
+
+    <section id="result" aria-live="polite"></section>
+  </div>
+
+  <p class="foot" style="margin-top:28px">Travel times are rough estimates for a cab in normal traffic. Entry fees, opening hours and weekly closures change, so confirm locally before you leave. Some monuments charge higher fees for foreign visitors.</p>
+</div>
+
+<script>
+"use strict";
+var ZONES={G:"Gurugram",SD:"South Delhi",CD:"Central Delhi",OD:"Old Delhi and north",FN:"Farrukhnagar"};
+var TRAVEL={G:{G:15,SD:45,CD:60,OD:75,FN:40},SD:{G:45,SD:15,CD:30,OD:40,FN:80},CD:{G:60,SD:30,CD:15,OD:20,FN:95},OD:{G:75,SD:40,CD:20,OD:12,FN:105},FN:{G:40,SD:80,CD:95,OD:105,FN:10}};
+var INTERESTS={history:"History and heritage",food:"Street food",nature:"Nature and birds",craft:"Crafts and markets",spiritual:"Faith and music",books:"Books and poetry",photo:"Photography",family:"Easy with kids"};
+var COSTS=["Free","Low","Moderate","Higher"];
+var GEM=["","Well known","Less visited","Rarely visited"];
+var DAYS=["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
+var BUDGETS=[["0","Free only"],["1","Up to low"],["2","Up to moderate"],["3","No limit"]];
+var PACES=[["relaxed","Relaxed"],["balanced","Balanced"],["packed","Packed"]];
+
+// zone, mins at the place, cost tier, gem 1-3, hard = lots of uneven walking, when = best time of day
+var PLACES=[
+ {id:"sultanpur",name:"Sultanpur National Park",area:"Sultanpur, Gurugram district",zone:"G",tags:["nature","photo","family"],mins:150,cost:1,gem:2,hard:1,when:"morning",season:[10,11,12,1,2,3],
+  blurb:"A wetland bird sanctuary where migratory waterfowl arrive in the cooler months. Flat walking trails and watchtowers overlook the shallow lake.",tip:"Go at opening time, when birds are most active. Carry water and binoculars if you have them."},
+ {id:"aravali",name:"Aravali Biodiversity Park",area:"Gurugram",zone:"G",tags:["nature","photo"],mins:90,cost:0,gem:3,hard:1,when:"morning",
+  blurb:"Former mining land restored as native Aravalli scrub forest, with walking paths among local tree and plant species.",tip:"Access rules and guided walks change, so check the park's current visiting arrangements first."},
+ {id:"leisure",name:"Leisure Valley Park",area:"Gurugram",zone:"G",tags:["nature","family"],mins:60,cost:0,gem:1,when:"morning",
+  blurb:"A long green corridor through the city where residents walk, jog and meet in the early hours.",tip:"A good easy start or finish if you are staying in Gurugram."},
+ {id:"sheetla",name:"Sheetla Mata Mandir",area:"Gurugram",zone:"G",tags:["spiritual"],mins:45,cost:0,gem:1,
+  blurb:"One of Gurugram's best-known temples. Local tradition links it to Kripi, wife of Guru Dronacharya, whose name the city is said to carry.",tip:"Dress modestly and expect crowds around festival days."},
+ {id:"farrukhnagar",name:"Farrukhnagar old town",area:"Farrukhnagar, Gurugram district",zone:"FN",tags:["history","photo"],mins:120,cost:0,gem:3,hard:1,
+  blurb:"A small walled town founded in the early 1730s by Faujdar Khan, with the Sheesh Mahal, a stepwell, a mosque and old gateways, well away from tourist routes.",tip:"Wear walking shoes and go in daylight. Some monuments are lightly maintained."},
+ {id:"agrasen",name:"Agrasen ki Baoli",area:"Connaught Place",zone:"CD",tags:["history","photo"],mins:40,cost:0,gem:2,
+  blurb:"A deep medieval stepwell tucked between high-rises near Connaught Place, with rows of arched niches on both sides of a long staircase.",tip:"Weekday mornings are quietest and give the best light on the steps."},
+ {id:"bhuli",name:"Bhuli Bhatiyari ka Mahal",area:"Delhi Ridge, Jhandewalan",zone:"CD",tags:["history","photo"],mins:50,cost:0,gem:3,hard:1,
+  blurb:"A ruined 14th-century Tughlaq-era hunting lodge inside the Ridge forest, wrapped in local ghost stories.",tip:"The Ridge can be isolated. Go in daylight and not alone."},
+ {id:"khirki",name:"Khirki Masjid",area:"Khirki Extension, Saket",zone:"SD",tags:["history","photo"],mins:40,cost:0,gem:3,
+  blurb:"A 14th-century mosque built under Firoz Shah Tughlaq's minister Khan-i-Jahan Junan Shah, unusual for its largely covered plan with small latticed openings.",tip:"It sits inside a dense urban village, so walk in from the main road and enjoy the contrast."},
+ {id:"mehrauli",name:"Mehrauli Archaeological Park",area:"Mehrauli",zone:"SD",tags:["history","nature","photo"],mins:120,cost:1,gem:2,hard:1,
+  blurb:"Hundreds of years of tombs, stepwells and mosques scattered across scrub forest, including the ornate Jamali Kamali complex and Rajon ki Baoli.",tip:"Wear walking shoes. Some sites are lightly signed, so keep a map open."},
+ {id:"hauzkhas",name:"Hauz Khas Fort and Tank",area:"Hauz Khas",zone:"SD",tags:["history","nature","photo","family"],mins:90,cost:1,gem:1,
+  blurb:"A 14th-century reservoir and madrasa complex built under Firoz Shah Tughlaq, beside the Deer Park.",tip:"The tank is best in late afternoon light."},
+ {id:"chausath",name:"Chausath Khamba",area:"Nizamuddin",zone:"SD",tags:["history","spiritual"],mins:45,cost:0,gem:2,
+  blurb:"A Mughal-era marble pavilion with 64 pillars, built in the early 1600s as the tomb of Mirza Aziz Koka, a foster brother of Akbar.",tip:"Combine with the Nizamuddin neighbourhood on foot."},
+ {id:"qawwali",name:"Qawwali at Nizamuddin Dargah",area:"Nizamuddin",zone:"SD",tags:["spiritual"],mins:90,cost:0,gem:1,when:"evening",days:[4],
+  blurb:"Sufi devotional music performed at the shrine of Hazrat Nizamuddin Auliya, with Thursday evenings the busiest and most atmospheric.",tip:"Cover your head, leave shoes at the entrance and dress modestly. Some inner areas are restricted."},
+ {id:"sunder",name:"Sunder Nursery",area:"Nizamuddin East",zone:"SD",tags:["nature","history","family","photo"],mins:100,cost:1,gem:1,
+  blurb:"A restored heritage park next to Humayun's Tomb, with 16th-century tombs among a large collection of tree species.",tip:"Plan it as a slow stop with a picnic-style break."},
+ {id:"garden5",name:"Garden of Five Senses",area:"Saidulajab, Saket",zone:"SD",tags:["nature","family","photo"],mins:75,cost:1,gem:2,
+  blurb:"A landscaped park of themed gardens, sculpture and open lawns on the edge of the Mehrauli ridge.",tip:"Good with kids and easy to pair with a Saket meal."},
+ {id:"dillihaat",name:"Dilli Haat, INA",area:"INA, South Delhi",zone:"SD",tags:["craft","food","family"],mins:100,cost:2,gem:1,
+  blurb:"A craft market with stalls of weavers and artisans from many states, plus a food court serving regional dishes.",tip:"Bring cash for small stalls and bargain gently."},
+ {id:"tughlaqabad",name:"Tughlaqabad Fort",area:"Tughlaqabad",zone:"SD",tags:["history","photo"],mins:90,cost:1,gem:2,hard:1,
+  blurb:"The vast ruined fortress of Ghiyasuddin Tughlaq from the early 14th century, with long stone ramparts and little shade.",tip:"Start early or late in the day and carry water."},
+ {id:"lodhi",name:"Lodhi Garden",area:"Lodhi Road",zone:"CD",tags:["nature","history","family","photo"],mins:70,cost:0,gem:1,when:"morning",
+  blurb:"A city park of 15th and 16th-century tombs, including the Bara Gumbad and Sheesh Gumbad, among old trees.",tip:"Quiet and cool early in the morning."},
+ {id:"humayun",name:"Humayun's Tomb and Nila Gumbad",area:"Nizamuddin East",zone:"SD",tags:["history","photo"],mins:90,cost:1,gem:1,
+  blurb:"The 16th-century garden tomb that shaped later Mughal architecture. Walk beyond the main tomb to find the blue-domed Nila Gumbad.",tip:"Foreign visitors pay a higher ticket price."},
+ {id:"crafts",name:"National Crafts Museum",area:"Pragati Maidan",zone:"CD",tags:["craft","history","family"],mins:90,cost:1,gem:2,
+  blurb:"A museum of Indian handicrafts, textiles and folk art, with a village complex of traditional dwellings.",tip:"Check the current opening days before you go."},
+ {id:"ghalib",name:"Mirza Ghalib ki Haveli",area:"Gali Qasim Jan, Ballimaran",zone:"OD",tags:["books","history"],mins:40,cost:0,gem:3,
+  blurb:"The old-city home where the Urdu poet Mirza Ghalib lived in his later years, now a small memorial.",tip:"Ask for directions in Gali Qasim Jan. Pair it with a Chandni Chowk walk."},
+ {id:"chandni",name:"Chandni Chowk food trail",area:"Old Delhi",zone:"OD",tags:["food","photo","history"],mins:120,cost:1,gem:1,
+  blurb:"A walk through the lanes of Old Delhi for parathas, jalebi, kebabs and nihari, with Karim's near Jama Masjid.",tip:"Go hungry, carry small notes and take the Metro in to avoid the traffic."},
+ {id:"dariba",name:"Dariba Kalan and Kinari Bazaar",area:"Old Delhi",zone:"OD",tags:["craft","photo","history"],mins:60,cost:0,gem:2,
+  blurb:"Old trading lanes known for silver jewellery, attar perfumers and wedding trimmings.",tip:"Browse first and buy after comparing two or three shops."},
+ {id:"daryaganj",name:"Daryaganj Sunday Book Market",area:"Daryaganj",zone:"OD",tags:["books"],mins:80,cost:1,gem:2,days:[0],
+  blurb:"A weekly pavement market of second-hand, old and rare books laid out along the road every Sunday.",tip:"Go before noon and bargain politely."},
+ {id:"majnu",name:"Majnu ka Tila",area:"Tibetan Colony, north Delhi",zone:"OD",tags:["food","craft"],mins:80,cost:1,gem:2,
+  blurb:"A Tibetan settlement on the Yamuna with narrow lanes of momo shops, prayer flags and small cafes.",tip:"Try thukpa or laphing. Late afternoon is a good time to visit."}
+];
+var BY={}; PLACES.forEach(function(p){BY[p.id]=p});
+var NOW=new Date(), MONTH=NOW.getMonth()+1;
+
+function $(s){return document.querySelector(s)}
+function h(tag,props){
+  var el=document.createElement(tag);
+  if(props){Object.keys(props).forEach(function(k){var v=props[k];
+    if(k==="class")el.className=v; else if(k==="text")el.textContent=v;
+    else if(k.indexOf("on")===0)el.addEventListener(k.slice(2),v);
+    else if(v!==false&&v!=null)el.setAttribute(k,v);});}
+  for(var i=2;i<arguments.length;i++){var kids=[].concat(arguments[i]);
+    kids.forEach(function(kid){if(kid==null||kid===false)return;el.append(kid.nodeType?kid:document.createTextNode(String(kid)))});}
+  return el;
+}
+function fmt(m){m=Math.round(m);var hh=Math.floor(m/60)%24,mm=m%60,ap=hh>=12?"pm":"am";hh=hh%12||12;return hh+":"+String(mm).padStart(2,"0")+" "+ap}
+function dur(m){var hh=Math.floor(m/60),mm=m%60;return ((hh?hh+" h ":"")+(mm?mm+" min":"")).trim()||"0 min"}
+
+/* ---------- form setup ---------- */
+(function build(){
+  DAYS.forEach(function(d,i){$("#day").append(h("option",{value:i,text:d}))});
+  for(var m=7*60;m<=14*60;m+=30)$("#from").append(h("option",{value:m,text:fmt(m)}));
+  for(var k=3;k<=10;k++)$("#hours").append(h("option",{value:k,text:k+" h"}));
+  Object.keys(INTERESTS).forEach(function(k){
+    $("#interests").append(h("label",null,h("input",{type:"checkbox",name:"interest",value:k,id:"int-"+k}),h("span",{text:INTERESTS[k]})));});
+  BUDGETS.forEach(function(b,i){$("#budget").append(h("label",null,h("input",{type:"radio",name:"budget",value:b[0],id:"bud-"+b[0]}),h("span",{text:b[1]})))});
+  PACES.forEach(function(p){$("#pace").append(h("label",null,h("input",{type:"radio",name:"pace",value:p[0],id:"pace-"+p[0]}),h("span",{text:p[1]})))});
+  var def={start:"G",day:NOW.getDay(),from:540,hours:7,interests:["history","food"],budget:"2",group:"friends",pace:"balanced",lang:"English"};
+  var saved=null;try{saved=JSON.parse(localStorage.getItem("nukkad-form")||"null")}catch(e){}
+  var f=Object.assign({},def,saved&&{start:saved.start,from:saved.from,hours:saved.hours,interests:saved.interests,budget:String(saved.budget),group:saved.group,pace:saved.pace,lang:saved.lang});
+  $("#start").value=f.start;$("#day").value=f.day;$("#from").value=f.from;$("#hours").value=f.hours;
+  $("#group").value=f.group;$("#lang").value=f.lang;
+  document.querySelectorAll("input[name=interest]").forEach(function(i){i.checked=(f.interests||[]).indexOf(i.value)>-1});
+  document.querySelector("input[name=budget][value='"+f.budget+"']").checked=true;
+  document.querySelector("input[name=pace][value='"+f.pace+"']").checked=true;
+})();
+
+function readForm(){
+  return {start:$("#start").value,day:+$("#day").value,from:+$("#from").value,hours:+$("#hours").value,
+    budget:+document.querySelector("input[name=budget]:checked").value,group:$("#group").value,
+    pace:document.querySelector("input[name=pace]:checked").value,lang:$("#lang").value,
+    interests:[].slice.call(document.querySelectorAll("input[name=interest]:checked")).map(function(i){return i.value})};
+}
+function saveForm(f){try{localStorage.setItem("nukkad-form",JSON.stringify(f))}catch(e){}}
+
+/* ---------- planning logic ---------- */
+function eligible(f){
+  var end=f.from+f.hours*60;
+  var pool=PLACES.filter(function(p){
+    if(p.cost>f.budget)return false;
+    if(p.days&&p.days.indexOf(f.day)<0)return false;
+    if(p.hard&&f.group==="seniors")return false;
+    if(p.when==="evening"&&end<18*60+30)return false;
+    if(p.when==="morning"&&f.from>11*60)return false;
+    return true;});
+  if(f.interests.length){
+    var strict=pool.filter(function(p){return p.tags.some(function(t){return f.interests.indexOf(t)>-1})});
+    if(strict.length>=3)pool=strict;}
+  return pool;
+}
+function score(p,f){
+  var s=p.tags.filter(function(t){return f.interests.indexOf(t)>-1}).length*4;
+  if(!f.interests.length)s+=1;
+  s+=p.gem;
+  if(p.season&&p.season.indexOf(MONTH)>-1)s+=3;
+  if(p.days)s+=4;
+  if(f.group==="family"&&p.tags.indexOf("family")>-1)s+=2;
+  if(f.group==="family"&&p.hard)s-=3;
+  if(p.when==="morning"&&f.from<=9*60+30)s+=1;
+  return s;
+}
+function mult(f){return {relaxed:1.25,balanced:1,packed:.8}[f.pace]}
+function maxStops(f){return {relaxed:4,balanced:5,packed:6}[f.pace]}
+function tt(a,b){return a?TRAVEL[a][b]:0}
+function order(ids,f){
+  var ps=ids.map(function(i){return BY[i]});
+  var first=ps.filter(function(p){return p.when==="morning"}), last=ps.filter(function(p){return p.when==="evening"});
+  var mid=ps.filter(function(p){return p.when!=="morning"&&p.when!=="evening"});
+  var out=[],prev=f.start==="ANY"?null:f.start;
+  first.forEach(function(p){out.push(p)});
+  if(first.length)prev=first[first.length-1].zone;
+  while(mid.length){
+    var bi=0,bt=1e9;
+    mid.forEach(function(p,i){var t=tt(prev,p.zone);if(t<bt){bt=t;bi=i}});
+    var p=mid.splice(bi,1)[0];out.push(p);prev=p.zone;}
+  last.forEach(function(p){out.push(p)});
+  return out.map(function(p){return p.id});
+}
+function schedule(ids,f){
+  var t=f.from,prev=f.start==="ANY"?null:f.start,m=mult(f),out=[];
+  ids.forEach(function(id){
+    var p=BY[id],tr=tt(prev,p.zone),arrive=t+tr;
+    if(p.when==="evening")arrive=Math.max(arrive,17*60+45);
+    var d=Math.round(p.mins*m/5)*5;
+    out.push({p:p,tr:tr,start:arrive,end:arrive+d});
+    t=arrive+d+10;prev=p.zone;});
+  return out;
+}
+function fit(ids,f){
+  var list=order(ids,f),s=schedule(list,f),limit=f.from+f.hours*60+20;
+  while(s.length>2&&s[s.length-1].end>limit){
+    var cand=list.map(function(id,i){return {i:i,sc:score(BY[id],f),ev:BY[id].when==="evening"}}).filter(function(c){return!c.ev}).sort(function(a,b){return a.sc-b.sc});
+    if(!cand.length)break;
+    list.splice(cand[0].i,1);s=schedule(list,f);}
+  return s;
+}
+function localPick(f){
+  var pool=eligible(f),chosen=[],used=0,prev=f.start==="ANY"?null:f.start,m=mult(f),win=f.hours*60;
+  var left=pool.slice();
+  while(chosen.length<maxStops(f)&&left.length){
+    var best=-1,bv=-1e9;
+    left.forEach(function(p,i){
+      var cost=tt(prev,p.zone)+p.mins*m+10;
+      if(used+cost>win)return;
+      var v=score(p,f)-tt(prev,p.zone)/15;
+      if(v>bv){bv=v;best=i}});
+    if(best<0)break;
+    var p=left.splice(best,1)[0];
+    used+=tt(prev,p.zone)+p.mins*m+10;prev=p.zone;chosen.push(p.id);}
+  return chosen;
+}
+function localTexts(ids,f){
+  var t={};
+  ids.forEach(function(id){
+    var p=BY[id],hit=p.tags.filter(function(x){return f.interests.indexOf(x)>-1}).map(function(x){return INTERESTS[x].toLowerCase()});
+    var why=hit.length?"Matches your interest in "+hit.join(" and ")+".":"A good fit for the time you have.";
+    if(p.gem===3)why+=" Rarely visited, so you may have it nearly to yourself.";
+    else if(p.gem===2)why+=" Less visited than the headline sights.";
+    if(p.season&&p.season.indexOf(MONTH)>-1)why+=" In season right now.";
+    if(p.days)why+=" Runs on "+p.days.map(function(d){return DAYS[d]+"s"}).join(" and ")+", which is your day.";
+    t[id]={why:why,context:p.blurb,tip:p.tip};});
+  return t;
+}
+function localPlan(f){
+  var ids=localPick(f);
+  var names=f.interests.slice(0,2).map(function(x){return INTERESTS[x].toLowerCase()});
+  return {ids:ids,texts:localTexts(ids,f),source:"local",
+    title:names.length?"A day of "+names.join(" and "):"A day in Delhi NCR",food:"",headsUp:""};
+}
+
+/* ---------- Claude (through server.js) ---------- */
+var CURRENT=null;
+var sampleFn=null,ctl=null;
+function makeAsk(){
+  async function ask(prompt,opts){
+    opts=opts||{};
+    var r;
+    try{r=await fetch("/api/ask",{method:"POST",headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({prompt:prompt,tier:opts.modelTier||"default"}),signal:opts.signal});}
+    catch(e){throw {code:e&&e.name==="AbortError"?"cancelled":"upstream_error",message:String(e)}}
+    var j=await r.json().catch(function(){return {}});
+    if(!r.ok)throw {code:r.status===429?"rate_limited":"upstream_error",message:j.error||"request failed"};
+    if(opts.onText)opts.onText({text:j.text});
+    return {text:j.text};
+  }
+  ask.json=async function(prompt,opts){
+    var res=await ask(prompt,opts),m=res.text.match(/\{[\s\S]*\}/);
+    try{return JSON.parse(m?m[0]:res.text)}catch(e){throw {code:"invalid_json",message:"bad json",text:res.text}}
+  };
+  return ask;
+}
+fetch("/api/health").then(function(r){return r.json()}).then(function(j){
+  if(j&&j.ai){sampleFn=makeAsk();if(CURRENT)render(CURRENT.plan,CURRENT.f);}
+}).catch(function(){});
+
+function errCopy(code){
+  var m={not_granted:"Claude access was not allowed for this page.",sampling_disabled:"Claude is not available for this account.",
+    rate_limited:"Claude is busy or a usage limit was reached. Try again in a little while.",session_expired:"Your session expired. Sign in again to use Claude.",
+    invalid_json:"Claude's reply could not be read.",refused:"Claude could not plan this request.",upstream_error:"Claude could not be reached."};
+  return m[code]||"Claude could not be used for this plan.";
+}
+async function claudePlan(f,signal){
+  var pool=eligible(f);
+  if(pool.length<2)throw {code:"none",message:"too few places"};
+  var cand=pool.map(function(p){return {id:p.id,name:p.name,area:p.area,zone:ZONES[p.zone],interests:p.tags.map(function(t){return INTERESTS[t]}),
+    minutes_at_place:p.mins,spend:COSTS[p.cost],best_time:p.when||"any",background:p.blurb}});
+  var lo=f.pace==="relaxed"?3:f.pace==="balanced"?4:5, hi=maxStops(f);
+  var prompt=[
+    "You are an experienced local guide in Delhi NCR. Plan one day for a visitor, choosing only from the candidate places below.",
+    "",
+    "Visitor:",
+    "- Starting from: "+(f.start==="ANY"?"anywhere in NCR":ZONES[f.start]),
+    "- Day: "+DAYS[f.day]+", month "+MONTH+". Leaves at "+fmt(f.from)+" and has "+f.hours+" hours.",
+    "- Interests: "+(f.interests.length?f.interests.map(function(i){return INTERESTS[i]}).join(", "):"open to anything"),
+    "- Group: "+({solo:"travelling alone",couple:"two adults",friends:"a group of friends",family:"a family with children",seniors:"a family with senior citizens, so keep walking light"})[f.group],
+    "- Pace: "+f.pace+". Choose between "+lo+" and "+hi+" stops that fit the time including travel.",
+    "- Spend: "+COSTS[f.budget]+" or below per person.",
+    "",
+    "Approximate cab minutes between zones (use to keep the route compact): "+JSON.stringify(TRAVEL),
+    "",
+    "Candidates (JSON): "+JSON.stringify(cand),
+    "",
+    "Reply with only one JSON object in this shape:",
+    '{"title":"up to six words","summary":"two sentences on the shape of the day","stops":[{"id":"candidate id","why":"one or two sentences tying this stop to this visitor","context":"two sentences of cultural or historical background","tip":"one practical local tip"}],"food":"one sentence on what to eat near the route, naming only well-known dishes or areas, or an empty string","headsUp":"one sentence of practical caution for this day and month, or an empty string"}',
+    "",
+    "Rules: list the stops in visiting order and keep each zone together. Use only ids from the candidates. Base context on the candidate background and well-established facts. Do not invent opening hours, ticket prices, phone numbers or addresses; if unsure, say to confirm locally. Do not list times; the page computes them.",
+    "Language for all text fields: "+f.lang+(f.lang==="Hindi"?" (Devanagari script). Keep place names as given.":"."),
+    "Today's date: "+NOW.toDateString()+"."
+  ].join("\n");
+  var data=await sampleFn.json(prompt,{signal:signal,modelTier:"default"});
+  var seen={},ids=[],texts={};
+  (data&&data.stops||[]).forEach(function(s){
+    if(s&&BY[s.id]&&!seen[s.id]&&pool.indexOf(BY[s.id])>-1){seen[s.id]=1;ids.push(s.id);
+      texts[s.id]={why:String(s.why||""),context:String(s.context||BY[s.id].blurb),tip:String(s.tip||BY[s.id].tip)};}});
+  if(ids.length<2)throw {code:"invalid_json",message:"too few valid stops"};
+  return {ids:ids,texts:texts,source:"claude",title:String(data.title||"Your day in Delhi NCR"),summary:String(data.summary||""),
+    food:String(data.food||""),headsUp:String(data.headsUp||"")};
+}
+
+/* ---------- rendering ---------- */
+function render(plan,f){
+  var sch=fit(plan.ids,f);
+  var trimmed=plan.ids.length-sch.length;
+  var travel=sch.reduce(function(a,s){return a+s.tr},0);
+  var topCost=sch.reduce(function(a,s){return Math.max(a,s.p.cost)},0);
+  var zones={};sch.forEach(function(s){zones[ZONES[s.p.zone]]=1});
+  var res=$("#result");res.replaceChildren();
+  CURRENT={plan:plan,f:f,sch:sch};
+  if(!sch.length){res.append(h("div",{class:"block"},h("h3",{text:"No places fit those settings"}),
+    h("p",{text:"Try more hours, a higher spend limit, or fewer interests. Some places only run on certain days."})));return}
+  var summary=plan.summary||(sch.length+" stops across "+Object.keys(zones).join(", ")+", with about "+dur(travel)+" of travel.");
+  res.append(h("div",{class:"res-head"},
+    h("h2",{text:plan.title}),
+    h("p",{class:"summary",text:summary}),
+    h("div",{class:"meta"},
+      h("span",{class:"pill src",text:plan.source==="claude"?"Written by Claude":"Built-in planner"}),
+      h("span",{class:"pill",text:sch.length+" stops"}),
+      h("span",{class:"pill",text:fmt(sch[0].start)+" to "+fmt(sch[sch.length-1].end)}),
+      h("span",{class:"pill",text:dur(travel)+" travel"}),
+      h("span",{class:"pill",text:"Spend: "+COSTS[topCost].toLowerCase()}))));
+  if(plan.note)res.append(h("div",{class:"status"},h("span",{text:plan.note})));
+  var warn=plan.headsUp;
+  if(!warn&&(MONTH>=10||MONTH===1))warn="Air quality across Delhi NCR is often poor between late October and January. Check the AQI that morning, favour shorter outdoor stops if it is high, and carry a mask.";
+  if(warn)res.append(h("div",{class:"banner",text:warn}));
+  if(trimmed>0)res.append(h("p",{class:"foot",text:trimmed+" suggested stop"+(trimmed>1?"s were":" was")+" dropped to fit your hours."}));
+  var ol=h("ol",{class:"stops"});
+  sch.forEach(function(s){
+    var p=s.p,tx=plan.texts[p.id]||{why:"",context:p.blurb,tip:p.tip};
+    var storyOut=h("div",{class:"story",hidden:true});
+    var storyBtn=sampleFn?h("button",{class:"btn ghost",type:"button",text:"Story behind this place",onclick:function(){story(p,storyOut,storyBtn,f.lang)}}):null;
+    var inSeason=p.season&&p.season.indexOf(MONTH)>-1;
+    ol.append(h("li",{class:"stop"},
+      h("div",{class:"when"},fmt(s.start)+" – "+fmt(s.end),h("span",{class:"tr",text:s.tr?s.tr+" min travel":"Start"})),
+      h("article",{class:"card"},
+        h("div",null,h("h3",{text:p.name}),h("div",{class:"area",text:p.area+" · "+ZONES[p.zone]})),
+        h("div",{class:"meta"},
+          h("span",{class:"pill neem",text:GEM[p.gem]}),
+          inSeason&&h("span",{class:"pill neem",text:"In season now"}),
+          h("span",{class:"pill",text:COSTS[p.cost]}),
+          p.tags.map(function(t){return h("span",{class:"pill",text:INTERESTS[t]})})),
+        tx.why&&h("p",{class:"why",text:tx.why}),
+        h("dl",{class:"facts"},
+          h("div",null,h("dt",{text:"Background"}),h("dd",{text:tx.context})),
+          h("div",null,h("dt",{text:"Local tip"}),h("dd",{text:tx.tip}))),
+        h("div",{class:"acts"},
+          h("a",{class:"btn ghost",href:"https://www.google.com/maps/search/?api=1&query="+encodeURIComponent(p.name+", "+p.area),target:"_blank",rel:"noopener",text:"Open in Maps"}),
+          storyBtn),
+        storyOut)));});
+  res.append(ol);
+  if(plan.food)res.append(h("div",{class:"block"},h("h3",{text:"Where to eat"}),h("p",{text:plan.food})));
+  var copyNote=h("span",{class:"formnote"});
+  var box=h("textarea",{id:"copybox",readonly:true,hidden:true,"aria-label":"Plan text"});
+  res.append(h("div",{class:"acts"},
+    h("button",{class:"btn ghost",type:"button",text:"Copy plan as text",onclick:function(){copyPlan(copyNote,box)}}),copyNote),box);
+}
+function planText(){
+  var c=CURRENT,lines=[c.plan.title,""];
+  c.sch.forEach(function(s){lines.push(fmt(s.start)+" – "+fmt(s.end)+"  "+s.p.name+" ("+s.p.area+")");
+    var tx=c.plan.texts[s.p.id];if(tx&&tx.tip)lines.push("   Tip: "+tx.tip);});
+  if(c.plan.food){lines.push("");lines.push("Eat: "+c.plan.food)}
+  lines.push("","Made with Nukkad. Confirm timings and fees locally.");
+  return lines.join("\n");
+}
+async function copyPlan(note,box){
+  var text=planText();
+  try{await navigator.clipboard.writeText(text);note.textContent="Copied.";box.hidden=true}
+  catch(e){box.value=text;box.hidden=false;box.focus();box.select();note.textContent="Copy is blocked here. The text is selected below."}
+}
+async function story(p,out,btn,lang){
+  if(!sampleFn)return;
+  btn.disabled=true;out.hidden=false;out.textContent="Thinking…";
+  var prompt="You are a knowledgeable local guide in Delhi NCR. In about 110 words, tell a visitor the story behind \""+p.name+"\" ("+p.area+"): who built or founded it and roughly when, why it matters locally, and one thing to look for when there. Use only well-established facts and leave out any detail you are unsure of; if part of the story is local tradition, say so. Plain prose, no headings or lists. Language: "+lang+". Background: "+p.blurb;
+  try{var r=await sampleFn(prompt,{modelTier:"quick",onText:function(u){out.textContent=u.text}});out.textContent=r.text}
+  catch(e){out.textContent=e&&e.text?e.text:errCopy(e&&e.code)}
+  finally{btn.disabled=false}
+}
+
+/* ---------- events ---------- */
+$("#planner").addEventListener("submit",async function(e){
+  e.preventDefault();
+  var f=readForm();saveForm(f);
+  var go=$("#go"),res=$("#result");
+  if(ctl){ctl.abort();ctl=null}
+  var plan=null,note="";
+  if(sampleFn){
+    ctl=new AbortController();var my=ctl;
+    go.disabled=true;
+    var stop=h("button",{class:"btn ghost",type:"button",text:"Stop",onclick:function(){my.abort()}});
+    res.replaceChildren(h("div",{class:"status"},h("span",{class:"dot"}),h("span",{text:"Claude is planning your route. This can take up to a minute."}),stop));
+    try{plan=await claudePlan(f,my.signal)}
+    catch(err){
+      if(err&&err.code==="cancelled"){go.disabled=false;ctl=null;if(CURRENT)render(CURRENT.plan,CURRENT.f);else render(localPlan(f),f);return}
+      note=err&&err.code==="none"?"Too few places match those settings, so nothing was sent to Claude.":errCopy(err&&err.code)+" This route comes from the built-in planner.";
+    }
+    ctl=null;go.disabled=false;
+  }else{
+    note="Claude is not available in this view, so the built-in planner made this route.";
+  }
+  if(!plan){plan=localPlan(f);plan.note=note}
+  render(plan,f);
+  var top=$("#result");if(top.scrollIntoView&&window.innerWidth<=880)top.scrollIntoView({behavior:"smooth",block:"start"});
+});
+
+(function init(){
+  var f=readForm(),plan=localPlan(f);
+  plan.note="This is a starter route from the built-in planner. Change anything on the left and press Plan my day.";
+  render(plan,f);
+})();
+</script>
+</body>
+</html>
